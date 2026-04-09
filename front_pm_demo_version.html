@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Inventory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#f8f8f7;
+      --bg-2:#cbc0b2;
+      --ink:#550b14;
+      --mute:#7e6961;
+      --brand:#550b14;
+      --brand-2:#7e6961;
+      --accent:#550b14;
+      --line:#cbc0b2;
+      --ok:#1f7a4d;
+      --warn:#9a6700;
+      --danger:#b42318;
+
+      --radius:18px;
+      --container:1200px;
+      --shadow:0 12px 28px rgba(85,11,20,.15);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:var(--bg);
+      font-family:'Inter',sans-serif;
+      line-height:1.6;
+      font-weight:400;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:var(--container);margin-inline:auto;padding:0 1.2rem}
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:60;
+      background:rgba(248,248,247,.9);
+      border-bottom:1px solid var(--line);
+      backdrop-filter:blur(8px);
+    }
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:.9rem 0;
+    }
+    .brand{
+      display:flex;
+      gap:.7rem;
+      align-items:center;
+    }
+    .seal{
+      width:50px;
+      height:50px;
+      border-radius:50%;
+      background:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      color:var(--brand);
+      border:2px solid var(--brand);
+      flex-shrink:0;
+    }
+    .brand h1{
+      margin:0;
+      font-size:1.35rem;
+      color:var(--brand);
+      font-weight:700;
+    }
+
+    nav .menu{
+      display:flex;
+      gap:.5rem;
+      align-items:center;
+    }
+    nav .menu a{
+      padding:.55rem .8rem;
+      border-radius:12px;
+      color:var(--mute);
+    }
+    nav .menu a:hover,
+    nav .menu a.active{
+      background:var(--bg-2);
+      color:var(--ink);
+    }
+
+    .burger{display:none;flex-direction:column;gap:.3rem}
+    .burger span{width:26px;height:2px;background:var(--ink);opacity:.8}
+
+    .ornament{position:relative;isolation:isolate}
+    .ornament::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 -1px 0;
+      height:14px;
+      z-index:-1;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 40px,
+          var(--brand) 40px 44px,
+          transparent 44px 84px,
+          var(--brand-2) 84px 88px
+        );
+      mask: radial-gradient(6px 6px at 12px 7px, #000 98%, transparent 100%) repeat 0 0/96px 14px;
+      opacity:.35;
+    }
+
+    section{padding:72px 0}
+    .kicker{
+      display:inline-flex;
+      gap:.5rem;
+      align-items:center;
+      padding:.3rem .6rem;
+      border-radius:999px;
+      font-size:.8rem;
+      background:var(--bg-2);
+      color:var(--brand);
+      border:1px solid var(--brand);
+      font-weight:500;
+    }
+    h2.title{
+      font-size:clamp(1.8rem,2.8vw,2.6rem);
+      margin:.6rem 0 1rem;
+      font-weight:700;
+      color:var(--brand);
+      line-height:1.2;
+    }
+    p.lead{
+      color:var(--mute);
+      max-width:72ch;
+      font-size:1.06rem;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:.9rem 1.1rem;
+      border-radius:14px;
+      background:var(--brand);
+      color:#fff;
+      font-weight:600;
+      border:0;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:all .2s ease;
+      font-size:.95rem;
+    }
+    .btn:hover{
+      background:#450910;
+      transform:translateY(-1px);
+    }
+    .btn.ghost{
+      background:transparent;
+      color:var(--brand);
+      border:2px solid var(--brand);
+      box-shadow:none;
+    }
+    .btn.ghost:hover{
+      background:var(--brand);
+      color:white;
+    }
+    .btn.flat{
+      background:var(--accent);
+      color:white;
+    }
+    .btn.small{
+      padding:.55rem .8rem;
+      border-radius:10px;
+      font-size:.87rem;
+    }
+
+    .hero{
+      background:linear-gradient(180deg,var(--bg),var(--bg-2));
+      border-bottom:1px solid var(--line);
+    }
+    .hero-wrap{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:2rem;
+      align-items:center;
+    }
+    .hero-card{
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:1.8rem;
+      box-shadow:var(--shadow);
+    }
+    .hero-side{
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:1.5rem;
+      box-shadow:var(--shadow);
+    }
+    .hero-stat{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:1rem;
+    }
+    .metric{
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:1rem;
+    }
+    .metric h3{
+      margin:0;
+      font-size:.95rem;
+      color:var(--mute);
+      font-weight:600;
+    }
+    .metric strong{
+      display:block;
+      margin-top:.45rem;
+      font-size:1.6rem;
+      color:var(--brand);
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1.5rem;
+      align-items:start;
+    }
+
+    .panel{
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:1.2rem;
+      box-shadow:0 6px 16px rgba(85,11,20,.08);
+    }
+    .panel h3{
+      margin:.2rem 0 .8rem;
+      color:var(--brand);
+      font-size:1.2rem;
+    }
+
+    .grid-cards{
+      display:grid;
+      gap:1.2rem;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    }
+    .card{
+      background:var(--bg);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:1.2rem;
+      box-shadow:0 6px 16px rgba(85,11,20,.08);
+      transition:transform .2s ease;
+    }
+    .card:hover{transform:translateY(-3px)}
+    .card h4{
+      margin:.2rem 0;
+      color:var(--brand);
+      font-size:1.05rem;
+    }
+    .meta{
+      color:var(--mute);
+      font-size:.92rem;
+    }
+
+    .list{
+      display:grid;
+      gap:.9rem;
+    }
+    .list-item{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:1rem;
+      background:var(--bg);
+    }
+
+    .badge{
+      display:inline-block;
+      background:var(--bg-2);
+      color:var(--brand);
+      border:1px solid var(--brand);
+      border-radius:999px;
+      padding:.25rem .6rem;
+      font-size:.76rem;
+      font-weight:600;
+    }
+
+    .status{
+      display:inline-block;
+      padding:.22rem .55rem;
+      border-radius:999px;
+      font-size:.75rem;
+      font-weight:700;
+      border:1px solid transparent;
+    }
+    .status.ok{color:var(--ok);border-color:rgba(31,122,77,.25);background:rgba(31,122,77,.08)}
+    .status.warn{color:var(--warn);border-color:rgba(154,103,0,.25);background:rgba(154,103,0,.08)}
+    .status.danger{color:var(--danger);border-color:rgba(180,35,24,.25);background:rgba(180,35,24,.08)}
+
+    form{
+      display:grid;
+      gap:1rem;
+    }
+    .grid-form-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1rem;
+    }
+    label{
+      display:block;
+      margin:0 0 .35rem;
+      color:var(--mute);
+      font-size:.92rem;
+    }
+    input,select,textarea{
+      width:100%;
+      padding:.85rem .9rem;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--bg);
+      color:var(--ink);
+      font:inherit;
+    }
+    .hint{
+      color:var(--mute);
+      font-size:.9rem;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+      background:var(--bg);
+    }
+    th,td{
+      text-align:left;
+      padding:.9rem;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+      font-size:.95rem;
+    }
+    th{
+      color:var(--brand);
+      background:var(--bg-2);
+    }
+
+    .toolbar{
+      display:flex;
+      gap:.7rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:1rem;
+    }
+
+    .note{
+      background:var(--bg);
+      border:1px dashed var(--line);
+      color:var(--mute);
+      padding:.8rem;
+      border-radius:12px;
+    }
+
+    .auth-wrap{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1.5rem;
+      align-items:start;
+    }
+
+    .message{
+      margin-top:1rem;
+      padding:.85rem 1rem;
+      border-radius:12px;
+      font-weight:500;
+      display:none;
+    }
+    .message.show{display:block}
+    .message.success{
+      background:rgba(31,122,77,.08);
+      border:1px solid rgba(31,122,77,.25);
+      color:var(--ok);
+    }
+    .message.error{
+      background:rgba(180,35,24,.08);
+      border:1px solid rgba(180,35,24,.25);
+      color:var(--danger);
+    }
+
+    .footer{
+      background:var(--brand);
+      color:white;
+      text-align:center;
+      padding:40px 20px;
+      margin-top:30px;
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width:960px){
+      .hero-wrap,
+      .grid-2,
+      .auth-wrap{
+        grid-template-columns:1fr;
+      }
+      nav .menu{
+        position:fixed;
+        inset:60px 0 auto 0;
+        display:none;
+        flex-direction:column;
+        background:rgba(248,248,247,.98);
+        border-bottom:1px solid var(--line);
+        padding:1rem;
+      }
+      nav .menu.open{display:flex}
+      .burger{display:flex}
+      .grid-form-2{grid-template-columns:1fr}
+      .hero-stat{grid-template-columns:1fr 1fr}
+    }
+
+    @media (max-width:640px){
+      .hero-stat{grid-template-columns:1fr}
+      table, thead, tbody, th, td, tr{display:block}
+      thead{display:none}
+      td{
+        border-bottom:1px solid var(--line);
+        padding:.7rem .8rem;
+      }
+      td::before{
+        content:attr(data-label);
+        display:block;
+        font-weight:700;
+        color:var(--brand);
+        margin-bottom:.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="ornament">
+    <div class="container nav">
+      <div class="brand">
+        <div class="seal">SI</div>
+        <h1>Smart Inventory</h1>
+      </div>
+      <nav>
+        <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="menu" id="menu">
+          <a href="#hero" class="active">Home</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="#products">Products</a>
+          <a href="#warehouses">Warehouses</a>
+          <a href="#stock">Stock</a>
+          <a href="#alerts">Alerts</a>
+          <a href="#analytics">Analytics</a>
+          <a href="#auth">Login</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section id="hero" class="hero ornament">
+    <div class="container hero-wrap">
+      <div class="hero-card">
+        <span class="kicker">Inventory • JWT Protected</span>
+        <h2 class="title">Manage products, warehouses, stock, alerts and analytics in one place</h2>
+        <p class="lead">
+          This frontend is built for your backend project. It includes authentication, product management,
+          warehouse management, stock updates, low stock alerts, and analytics overview.
+        </p>
+        <div style="display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.4rem">
+          <a class="btn" href="#dashboard">Open Dashboard</a>
+          <a class="btn ghost" href="#auth">Login / Register</a>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <h3 style="margin-top:0;color:var(--brand)">Quick system view</h3>
+        <div class="hero-stat">
+          <div class="metric">
+            <h3>Products</h3>
+            <strong id="heroProducts">0</strong>
+          </div>
+          <div class="metric">
+            <h3>Warehouses</h3>
+            <strong id="heroWarehouses">0</strong>
+          </div>
+          <div class="metric">
+            <h3>Alerts</h3>
+            <strong id="heroAlerts">0</strong>
+          </div>
+          <div class="metric">
+            <h3>Status</h3>
+            <strong id="heroStatus">Guest</strong>
+          </div>
+        </div>
+        <div class="note" style="margin-top:1rem">
+          Update <strong>API_BASE</strong> in the script if your backend URL is different.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboard" class="ornament">
+    <div class="container">
+      <span class="kicker">Overview</span>
+      <h2 class="title">Dashboard</h2>
+      <p class="lead">A simple overview of the main inventory modules connected to your backend.</p>
+
+      <div class="grid-cards">
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Authentication</h4>
+          <p class="meta">JWT login and register flow for protected requests.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Products</h4>
+          <p class="meta">Create and display products from the backend.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Warehouses</h4>
+          <p class="meta">Create warehouse records and fetch available warehouses.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Stock</h4>
+          <p class="meta">Update stock quantities for products in warehouses.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Alerts</h4>
+          <p class="meta">Load low stock alerts for manager monitoring.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Module</span>
+          <h4>Analytics</h4>
+          <p class="meta">Display analytics data returned by the backend.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="auth" class="ornament">
+    <div class="container">
+      <span class="kicker">Secure access</span>
+      <h2 class="title">Register and Login</h2>
+      <p class="lead">Create a user account or sign in to start using protected backend endpoints.</p>
+
+      <div class="auth-wrap">
+        <div class="panel">
+          <h3>Register</h3>
+          <form id="registerForm">
+            <div class="grid-form-2">
+              <div>
+                <label for="regUsername">Username</label>
+                <input id="regUsername" type="text" placeholder="Enter username" required />
+              </div>
+              <div>
+                <label for="regEmail">Email</label>
+                <input id="regEmail" type="email" placeholder="Enter email" />
+              </div>
+            </div>
+            <div class="grid-form-2">
+              <div>
+                <label for="regPassword">Password</label>
+                <input id="regPassword" type="password" placeholder="Enter password" required />
+              </div>
+              <div>
+                <label for="regRole">Role</label>
+                <input id="regRole" type="text" placeholder="Example: ADMIN or USER" />
+              </div>
+            </div>
+            <button class="btn" type="submit">Create account</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h3>Login</h3>
+          <form id="loginForm">
+            <div>
+              <label for="loginUsername">Username / Email</label>
+              <input id="loginUsername" type="text" placeholder="Enter login" required />
+            </div>
+            <div>
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" placeholder="Enter password" required />
+            </div>
+            <div style="display:flex; gap:.7rem; flex-wrap:wrap">
+              <button class="btn flat" type="submit">Login</button>
+              <button class="btn ghost" type="button" id="logoutBtn">Logout</button>
+            </div>
+            <p class="hint">JWT token will be saved in localStorage for protected requests.</p>
+          </form>
+        </div>
+      </div>
+
+      <div id="globalMessage" class="message"></div>
+    </div>
+  </section>
+
+  <section id="products" class="ornament">
+    <div class="container">
+      <span class="kicker">Inventory core</span>
+      <h2 class="title">Products</h2>
+      <p class="lead">Create products and load all products from the backend.</p>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Create Product</h3>
+          <form id="productForm">
+            <div class="grid-form-2">
+              <div>
+                <label for="productName">Name</label>
+                <input id="productName" type="text" placeholder="Product name" required />
+              </div>
+              <div>
+                <label for="productBarcode">Barcode</label>
+                <input id="productBarcode" type="text" placeholder="Barcode" />
+              </div>
+            </div>
+            <div class="grid-form-2">
+              <div>
+                <label for="productCategory">Category</label>
+                <input id="productCategory" type="text" placeholder="Category" />
+              </div>
+              <div>
+                <label for="productPrice">Price</label>
+                <input id="productPrice" type="number" step="0.01" placeholder="Price" />
+              </div>
+            </div>
+            <button class="btn" type="submit">Add Product</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar">
+            <h3 style="margin:0">Products List</h3>
+            <button class="btn ghost small" id="loadProductsBtn">Refresh</button>
+          </div>
+          <div class="note" style="margin-bottom:1rem">If your real product fields are different, only change the form body in JavaScript.</div>
+          <div id="productsList" class="list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="warehouses" class="ornament">
+    <div class="container">
+      <span class="kicker">Storage</span>
+      <h2 class="title">Warehouses</h2>
+      <p class="lead">Create warehouses and view available warehouse records.</p>
+
+      <div class="grid-2">
+        <div class="panel">
+          <h3>Create Warehouse</h3>
+          <form id="warehouseForm">
+            <div class="grid-form-2">
+              <div>
+                <label for="warehouseName">Warehouse Name</label>
+                <input id="warehouseName" type="text" placeholder="Warehouse name" required />
+              </div>
+              <div>
+                <label for="warehouseLocation">Location</label>
+                <input id="warehouseLocation" type="text" placeholder="Location" />
+              </div>
+            </div>
+            <button class="btn" type="submit">Add Warehouse</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar">
+            <h3 style="margin:0">Warehouses List</h3>
+            <button class="btn ghost small" id="loadWarehousesBtn">Refresh</button>
+          </div>
+          <div id="warehousesList" class="list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="stock" class="ornament">
+    <div class="container">
+      <span class="kicker">Quantity management</span>
+      <h2 class="title">Stock Update</h2>
+      <p class="lead">Update product quantities in the backend. Use your real stock request structure here if needed.</p>
+
+      <div class="panel">
+        <form id="stockForm">
+          <div class="grid-form-2">
+            <div>
+              <label for="stockProductId">Product ID</label>
+              <input id="stockProductId" type="number" placeholder="Product ID" required />
+            </div>
+            <div>
+              <label for="stockWarehouseId">Warehouse ID</label>
+              <input id="stockWarehouseId" type="number" placeholder="Warehouse ID" required />
+            </div>
+          </div>
+          <div class="grid-form-2">
+            <div>
+              <label for="stockQuantity">Quantity</label>
+              <input id="stockQuantity" type="number" placeholder="Quantity" required />
+            </div>
+            <div>
+              <label for="stockOperation">Operation</label>
+              <select id="stockOperation">
+                <option value="SET">SET</option>
+                <option value="INCREASE">INCREASE</option>
+                <option value="DECREASE">DECREASE</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn" type="submit">Update Stock</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="alerts" class="ornament">
+    <div class="container">
+      <span class="kicker">Monitoring</span>
+      <h2 class="title">Low Stock Alerts</h2>
+      <p class="lead">See products with low quantity or alert messages returned from your backend.</p>
+
+      <div class="panel">
+        <div class="toolbar">
+          <h3 style="margin:0">Alerts</h3>
+          <button class="btn ghost small" id="loadAlertsBtn">Refresh</button>
+        </div>
+        <div id="alertsList" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="analytics" class="ornament">
+    <div class="container">
+      <span class="kicker">Reporting</span>
+      <h2 class="title">Analytics</h2>
+      <p class="lead">Load analytics information and display it in a simple table/card format.</p>
+
+      <div class="panel">
+        <div class="toolbar">
+          <h3 style="margin:0">Analytics Data</h3>
+          <button class="btn ghost small" id="loadAnalyticsBtn">Refresh</button>
+        </div>
+        <div id="analyticsBox" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    <div class="container">
+      <div>© <span id="year"></span> Smart Inventory</div>
+      <div style="margin-top:.4rem;opacity:.9">Simple frontend for your Spring Boot backend</div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+
+    const API = {
+      BASE: "http://localhost:8080",
+      REGISTER: "/auth/register",
+      LOGIN: "/auth/login",
+      PRODUCTS: "/products",
+      WAREHOUSES: "/warehouses",
+      STOCK: "/stock",
+      ALERTS: "/alerts",
+      ANALYTICS: "/analytics"
+    };
+
+    const STORAGE_KEYS = {
+      TOKEN: "smart_inventory_token",
+      USER: "smart_inventory_user"
+    };
+
+    const burger = $('#burger');
+    const menu = $('#menu');
+
+    if (burger && menu) {
+      burger.addEventListener('click', () => {
+        const open = menu.classList.toggle('open');
+        burger.setAttribute('aria-expanded', String(open));
+      });
+
+      const links = $$('#menu a');
+      const sections = links
+        .map(a => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            links.forEach(a => a.classList.remove('active'));
+            const active = links.find(a => a.getAttribute('href') === '#' + entry.target.id);
+            if (active) active.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-45% 0% -45% 0%', threshold: 0.01 });
+
+      sections.forEach(section => io.observe(section));
+    }
+
+    function getToken() {
+      return localStorage.getItem(STORAGE_KEYS.TOKEN) || "";
+    }
+
+    function setToken(token) {
+      localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+    }
+
+    function clearAuth() {
+      localStorage.removeItem(STORAGE_KEYS.TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      updateHeroStatus();
+    }
+
+    function setUser(login) {
+      localStorage.setItem(STORAGE_KEYS.USER, login);
+    }
+
+    function getUser() {
+      return localStorage.getItem(STORAGE_KEYS.USER) || "Guest";
+    }
+
+    function updateHeroStatus() {
+      $('#heroStatus').textContent = getToken() ? getUser() : "Guest";
+    }
+
+    function showMessage(text, type="success") {
+      const box = $('#globalMessage');
+      box.textContent = text;
+      box.className = `message show ${type}`;
+      setTimeout(() => {
+        box.classList.remove('show');
+      }, 3500);
+    }
+
+    async function apiRequest(path, options = {}, useAuth = false) {
+      const headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      };
+
+      if (useAuth && getToken()) {
+        headers["Authorization"] = `Bearer ${getToken()}`;
+      }
+
+      const response = await fetch(API.BASE + path, {
+        ...options,
+        headers
+      });
+
+      if (!response.ok) {
+        let errorText = `Request failed: ${response.status}`;
+        try {
+          const errData = await response.text();
+          if (errData) errorText = errData;
+        } catch {}
+        throw new Error(errorText);
+      }
+
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        return response.json();
+      }
+      return response.text();
+    }
+
+    function normalizeArray(data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.content)) return data.content;
+      if (data && Array.isArray(data.data)) return data.data;
+      return [];
+    }
+
+    function renderProducts(items) {
+      const list = $('#productsList');
+      list.innerHTML = '';
+
+      if (!items.length) {
+        list.innerHTML = `<div class="note">No products found.</div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'list-item';
+        el.innerHTML = `
+          <strong>${item.name ?? item.productName ?? 'Unnamed Product'}</strong>
+          <div class="meta">ID: ${item.id ?? '-'} | Barcode: ${item.barcode ?? item.code ?? '-'}</div>
+          <div class="meta">Category: ${item.category ?? '-'} | Price: ${item.price ?? item.unitPrice ?? '-'}</div>
+        `;
+        list.appendChild(el);
+      });
+
+      $('#heroProducts').textContent = items.length;
+    }
+
+    function renderWarehouses(items) {
+      const list = $('#warehousesList');
+      list.innerHTML = '';
+
+      if (!items.length) {
+        list.innerHTML = `<div class="note">No warehouses found.</div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'list-item';
+        el.innerHTML = `
+          <strong>${item.name ?? item.warehouseName ?? 'Unnamed Warehouse'}</strong>
+          <div class="meta">ID: ${item.id ?? '-'}</div>
+          <div class="meta">Location: ${item.location ?? item.address ?? '-'}</div>
+        `;
+        list.appendChild(el);
+      });
+
+      $('#heroWarehouses').textContent = items.length;
+    }
+
+    function renderAlerts(items) {
+      const list = $('#alertsList');
+      list.innerHTML = '';
+
+      if (!items.length) {
+        list.innerHTML = `<div class="note">No alerts found.</div>`;
+        $('#heroAlerts').textContent = 0;
+        return;
+      }
+
+      items.forEach(item => {
+        const levelClass =
+          (item.severity || item.level || '').toString().toLowerCase().includes('high') ? 'danger' :
+          (item.severity || item.level || '').toString().toLowerCase().includes('medium') ? 'warn' :
+          'ok';
+
+        const el = document.createElement('div');
+        el.className = 'list-item';
+        el.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center">
+            <strong>${item.message ?? item.alertMessage ?? item.productName ?? 'Low stock alert'}</strong>
+            <span class="status ${levelClass}">${item.severity ?? item.level ?? 'LOW'}</span>
+          </div>
+          <div class="meta">ID: ${item.id ?? '-'} | Product ID: ${item.productId ?? '-'}</div>
+          <div class="meta">Quantity: ${item.quantity ?? item.currentStock ?? '-'}</div>
+        `;
+        list.appendChild(el);
+      });
+
+      $('#heroAlerts').textContent = items.length;
+    }
+
+    function renderAnalytics(data) {
+      const box = $('#analyticsBox');
+      box.innerHTML = '';
+
+      const arr = Array.isArray(data) ? data : [data];
+
+      if (!arr.length || (arr.length === 1 && !arr[0])) {
+        box.innerHTML = `<div class="note">No analytics data found.</div>`;
+        return;
+      }
+
+      arr.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'list-item';
+
+        const entries = Object.entries(item || {});
+        if (!entries.length) {
+          el.innerHTML = `<div class="meta">Empty analytics object</div>`;
+        } else {
+          el.innerHTML = entries.map(([k, v]) => `
+            <div style="display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid var(--line);padding:.45rem 0">
+              <strong style="color:var(--brand)">${k}</strong>
+              <span class="meta">${typeof v === 'object' ? JSON.stringify(v) : v}</span>
+            </div>
+          `).join('');
+        }
+
+        box.appendChild(el);
+      });
+    }
+
+    async function loadProducts() {
+      try {
+        const data = await apiRequest(API.PRODUCTS, { method: "GET" }, true);
+        renderProducts(normalizeArray(data));
+      } catch (err) {
+        $('#productsList').innerHTML = `<div class="note">Failed to load products: ${err.message}</div>`;
+      }
+    }
+
+    async function loadWarehouses() {
+      try {
+        const data = await apiRequest(API.WAREHOUSES, { method: "GET" }, true);
+        renderWarehouses(normalizeArray(data));
+      } catch (err) {
+        $('#warehousesList').innerHTML = `<div class="note">Failed to load warehouses: ${err.message}</div>`;
+      }
+    }
+
+    async function loadAlerts() {
+      try {
+        const data = await apiRequest(API.ALERTS, { method: "GET" }, true);
+        renderAlerts(normalizeArray(data));
+      } catch (err) {
+        $('#alertsList').innerHTML = `<div class="note">Failed to load alerts: ${err.message}</div>`;
+      }
+    }
+
+    async function loadAnalytics() {
+      try {
+        const data = await apiRequest(API.ANALYTICS, { method: "GET" }, true);
+        renderAnalytics(data);
+      } catch (err) {
+        $('#analyticsBox').innerHTML = `<div class="note">Failed to load analytics: ${err.message}</div>`;
+      }
+    }
+
+    $('#registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        username: $('#regUsername').value.trim(),
+        email: $('#regEmail').value.trim(),
+        password: $('#regPassword').value.trim(),
+        role: $('#regRole').value.trim()
+      };
+
+      try {
+        await apiRequest(API.REGISTER, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        showMessage("Registration successful.", "success");
+        e.target.reset();
+      } catch (err) {
+        showMessage("Registration failed: " + err.message, "error");
+      }
+    });
+
+    $('#loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const loginValue = $('#loginUsername').value.trim();
+      const password = $('#loginPassword').value.trim();
+
+      const payload = {
+        username: loginValue,
+        password
+      };
+
+      try {
+        const data = await apiRequest(API.LOGIN, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        const token = data.token || data.jwt || data.accessToken || data.access_token;
+        if (!token) {
+          throw new Error("Token not found in response");
+        }
+
+        setToken(token);
+        setUser(loginValue);
+        updateHeroStatus();
+        showMessage("Login successful.", "success");
+        e.target.reset();
+
+        loadProducts();
+        loadWarehouses();
+        loadAlerts();
+        loadAnalytics();
+      } catch (err) {
+        showMessage("Login failed: " + err.message, "error");
+      }
+    });
+
+    $('#logoutBtn').addEventListener('click', () => {
+      clearAuth();
+      showMessage("Logged out.", "success");
+    });
+
+    $('#productForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        name: $('#productName').value.trim(),
+        barcode: $('#productBarcode').value.trim(),
+        category: $('#productCategory').value.trim(),
+        price: Number($('#productPrice').value || 0)
+      };
+
+      try {
+        await apiRequest(API.PRODUCTS, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        }, true);
+
+        showMessage("Product created successfully.", "success");
+        e.target.reset();
+        loadProducts();
+      } catch (err) {
+        showMessage("Failed to create product: " + err.message, "error");
+      }
+    });
+
+    $('#warehouseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        name: $('#warehouseName').value.trim(),
+        location: $('#warehouseLocation').value.trim()
+      };
+
+      try {
+        await apiRequest(API.WAREHOUSES, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        }, true);
+
+        showMessage("Warehouse created successfully.", "success");
+        e.target.reset();
+        loadWarehouses();
+      } catch (err) {
+        showMessage("Failed to create warehouse: " + err.message, "error");
+      }
+    });
+
+    $('#stockForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        productId: Number($('#stockProductId').value),
+        warehouseId: Number($('#stockWarehouseId').value),
+        quantity: Number($('#stockQuantity').value),
+        operation: $('#stockOperation').value
+      };
+
+      try {
+        await apiRequest(API.STOCK, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        }, true);
+
+        showMessage("Stock updated successfully.", "success");
+        e.target.reset();
+        loadAlerts();
+        loadAnalytics();
+      } catch (err) {
+        showMessage("Failed to update stock: " + err.message, "error");
+      }
+    });
+
+    $('#loadProductsBtn').addEventListener('click', loadProducts);
+    $('#loadWarehousesBtn').addEventListener('click', loadWarehouses);
+    $('#loadAlertsBtn').addEventListener('click', loadAlerts);
+    $('#loadAnalyticsBtn').addEventListener('click', loadAnalytics);
+
+    $('#year').textContent = new Date().getFullYear();
+
+    updateHeroStatus();
+
+    if (getToken()) {
+      loadProducts();
+      loadWarehouses();
+      loadAlerts();
+      loadAnalytics();
+    }
+  </script>
+</body>
+</html>
